@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MOONTRIP VISUAL</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            font-size: 17px;
+            cursor: none;
+        }
+        
+        #myVideo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%; 
+            min-height: 100%;
+        }
+        
+        .content {
+            position: fixed;
+            top: 30%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translatey(0px);
+                transform: scale(1);
+            }
+            50% {
+                transform: translatey(-100px);
+                transform: scale(1.0125);
+            }
+            100% {
+                transform: translatey(0px);
+                transform: scale(1);
+            }
+}
+
+        #logo{
+            min-width: 40vw;
+            max-width: 40vw;
+            animation: float 0.31s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop id="myVideo">
+        <source src="media/HEAVYLANDING_FINAL.mp4" type="video/mp4" id="source">
+        Your browser does not support HTML5 video.
+      </video>
+      
+      <div class="content">
+            <img src="media/mLogo.png" id="logo"/>
+      </div>
+      
+
+</body>
+
+<script>
+    // Set display times here
+    const LOGO_ON_TIME_MILISECONDS = 20000;
+    const LOGO_OFF_TIME_MILISECONDS = 47500;
+    const MOONTRIP_TO_ARTIST_TIME = 10000;
+
+    // Logo variables
+    var images = new Array();
+    var x = 0;
+    images[0] = "media/estralin_jawd_Logo.png";
+    images[1] = "media/emptyImage.png";
+    var isMoontripLogo = true;
+    var artistLogo = "media/estralin_jawd_Logo.png";
+    // Starting cycle
+    setTimeout("changeImage()", LOGO_ON_TIME_MILISECONDS);
+    setTimeout("changeLogoType()", MOONTRIP_TO_ARTIST_TIME);
+
+    // Changing logo ON-OFF
+    function changeImage() {
+        var img = document.getElementById("logo");
+        img.src = images[x];
+        x++;    
+        if(x == 1) {
+            setTimeout("changeImage()", LOGO_ON_TIME_MILISECONDS); }
+        else {
+            setTimeout("changeImage()", LOGO_OFF_TIME_MILISECONDS); }
+
+        if(x >= images.length) {
+            x = 0;
+        } 
+    }
+
+    // Changing between moontrip and artist logo
+    function changeLogoType() {
+        if(isMoontripLogo){
+            images[0] = artistLogo;
+        } else {
+            images[0] = "media/mLogo.png";
+        }
+        isMoontripLogo = !isMoontripLogo;
+        setTimeout("changeLogoType()", MOONTRIP_TO_ARTIST_TIME);
+    }
+
+    // Changing artist logo with keyboard
+    document.addEventListener('keydown', (event) => {
+        var key = event.code;
+        switch(key){
+            case 'Digit1': 
+                artistLogo = "media/estralin_jawd_Logo.png";
+                break;
+            case 'Digit2': 
+                artistLogo = "media/hyperionLogo.png";
+                break;
+            case 'Digit3': 
+                artistLogo = "media/shaymiLogo.png";
+                break;
+            case 'Digit4': 
+                artistLogo = "media/hatedLogo.png";
+                break;
+            case 'Digit5': 
+                artistLogo = "media/dopeModeLogo.png";
+                break;
+            case 'Digit6':
+                artistLogo = "media/hrspxLogo.png";
+                break;
+            default:
+                break;
+        }
+        images[0] = artistLogo;
+    })
+
+</script>
+</html> 
