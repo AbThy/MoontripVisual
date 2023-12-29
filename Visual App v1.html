@@ -1,138 +1,199 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>MOONTRIP VISUAL</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            font-size: 17px;
-            cursor: none;
-        }
-        
-        #myVideo {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%; 
-            min-height: 100%;
-        }
-        
-        .content {
-            position: fixed;
-            top: 30%;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translatey(0px);
-                transform: scale(1);
-            }
-            50% {
-                transform: translatey(-100px);
-                transform: scale(1.0125);
-            }
-            100% {
-                transform: translatey(0px);
-                transform: scale(1);
-            }
-}
-
-        #logo{
-            min-width: 40vw;
-            max-width: 40vw;
-            animation: float 0.31s ease-in-out infinite;
-        }
-    </style>
-</head>
-<body>
-
+  <head>
+    <title>MOONTRIP VISUAL</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <video autoplay muted loop id="myVideo">
-        <source src="media/HEAVYLANDING_FINAL.mp4" type="video/mp4" id="source">
-        Your browser does not support HTML5 video.
-      </video>
-      
-      <div class="content">
-            <img src="media/mLogo.png" id="logo"/>
-      </div>
-      
+      <source src="media/vid/vid0.mp4" type="video/mp4" id="source" />
+      Your browser does not support HTML5 video.
+    </video>
 
-</body>
+    <div id="content">
+      <!-- Images will be added here -->
+    </div>
+  </body>
 
-<script>
-    // Set display times here
-    const LOGO_ON_TIME_MILISECONDS = 20000;
-    const LOGO_OFF_TIME_MILISECONDS = 47500;
-    const MOONTRIP_TO_ARTIST_TIME = 10000;
+  <script>
+    // Div that contains the current image
+    const contentDiv = document.getElementById("content");
+    let currentImageElement = null;
+    const videoElement = document.getElementById("myVideo");
+    const videoSource = document.getElementById("source");
+    let currentInterval = null;
 
-    // Logo variables
-    var images = new Array();
-    var x = 0;
-    images[0] = "media/estralin_jawd_Logo.png";
-    images[1] = "media/emptyImage.png";
-    var isMoontripLogo = true;
-    var artistLogo = "media/estralin_jawd_Logo.png";
-    // Starting cycle
-    setTimeout("changeImage()", LOGO_ON_TIME_MILISECONDS);
-    setTimeout("changeLogoType()", MOONTRIP_TO_ARTIST_TIME);
+    // Variables that handle currently shown media
+    let currentArtist = 0;
+    let currentArtistImage = -1;
+    let currentMoontripImage = -1;
 
-    // Changing logo ON-OFF
-    function changeImage() {
-        var img = document.getElementById("logo");
-        img.src = images[x];
-        x++;    
-        if(x == 1) {
-            setTimeout("changeImage()", LOGO_ON_TIME_MILISECONDS); }
-        else {
-            setTimeout("changeImage()", LOGO_OFF_TIME_MILISECONDS); }
+    // Times to change and display images / videos
+    const CHANGE_BETWEEN_MOONTRIP = 2000;
+    const MOONTRIP_TIME = 5000;
+    const NO_LAYER_TIME = 5000;
+    const ARTIST_TIME = 20000;
 
-        if(x >= images.length) {
-            x = 0;
-        } 
-    }
+    // Video and image data
+    const videos = ["media/video/vid0.mp4", "media/video/vid1.mp4"];
 
-    // Changing between moontrip and artist logo
-    function changeLogoType() {
-        if(isMoontripLogo){
-            images[0] = artistLogo;
-        } else {
-            images[0] = "media/mLogo.png";
-        }
-        isMoontripLogo = !isMoontripLogo;
-        setTimeout("changeLogoType()", MOONTRIP_TO_ARTIST_TIME);
-    }
+    const moontripImgs = [
+      "media/moontrip/mLogo.png",
+      "media/moontrip/seejoin.png",
+    ];
 
-    // Changing artist logo with keyboard
-    document.addEventListener('keydown', (event) => {
+    const nitebork = {
+      folder: "media/nitebork/",
+      images: ["n1.png", "n2.png", "n3.png", "n4.png"],
+    };
+
+    const obae = {
+      folder: "media/obae/",
+      images: ["o1.png", "o2.png", ",o3.png", "o4.png", "o5.png"],
+    };
+
+    const artists = [nitebork, obae];
+
+    // Functions
+    const changeImage = async (src, id) => {
+      if (currentImageElement) {
+        contentDiv.removeChild(currentImageElement);
+        currentImageElement = null;
+      }
+
+      currentImageElement = document.createElement("img");
+      currentImageElement.id = id;
+      currentImageElement.src = src;
+      contentDiv.appendChild(currentImageElement);
+    };
+
+    const changeVideo = (fileName) => {
+      videoElement.pause();
+      videoSource.src = `media/vid/${fileName}.mp4`;
+      videoElement.load();
+    };
+
+    const changeToMoontripVisuals = () => {
+      if (currentInterval) {
+        clearInterval(currentInterval);
+        currentInterval = null;
+      }
+      changeBetweenMoontripVisuals();
+      currentInterval = setInterval(
+        "changeBetweenMoontripVisuals()",
+        CHANGE_BETWEEN_MOONTRIP
+      );
+      setTimeout("changeToNothing(false)", MOONTRIP_TIME);
+    };
+
+    const changeBetweenMoontripVisuals = () => {
+      if (currentMoontripImage >= moontripImgs.length - 1) {
+        currentMoontripImage = 0;
+      } else {
+        currentMoontripImage++;
+      }
+      changeImage(moontripImgs[currentMoontripImage], "logo");
+    };
+
+    const changeToArtistVisuals = () => {
+      if (currentInterval) {
+        clearInterval(currentInterval);
+        currentInterval = null;
+      }
+      changeBetweenArtistVisuals();
+      currentInterval = setInterval(
+        "changeBetweenArtistVisuals()",
+        CHANGE_BETWEEN_MOONTRIP
+      );
+      setTimeout("changeToNothing(true)", ARTIST_TIME);
+    };
+
+    const changeBetweenArtistVisuals = () => {
+      if (currentArtistImage >= artists[currentArtist].images.length - 1) {
+        currentArtistImage = 0;
+      } else {
+        currentArtistImage++;
+      }
+      changeImage(
+        artists[currentArtist].folder +
+          artists[currentArtist].images[currentArtistImage],
+        "artist"
+      );
+    };
+
+    const changeToNothing = (previousWasArtist) => {
+      if (currentInterval) {
+        clearInterval(currentInterval);
+        currentInterval = null;
+      }
+      if (currentImageElement) {
+        contentDiv.removeChild(currentImageElement);
+        currentImageElement = null;
+      }
+      setTimeout(
+        previousWasArtist
+          ? "changeToMoontripVisuals()"
+          : "changeToArtistVisuals()",
+        NO_LAYER_TIME
+      );
+      currentArtistImage = -1;
+      currentMoontripImage = -1;
+    };
+
+    const changeArtist = (id) => {
+      currentArtistImage = 0;
+      currentArtist = id;
+    };
+
+    const addKeyListeners = () => {
+      document.addEventListener("keydown", (event) => {
         var key = event.code;
-        switch(key){
-            case 'Digit1': 
-                artistLogo = "media/estralin_jawd_Logo.png";
-                break;
-            case 'Digit2': 
-                artistLogo = "media/hyperionLogo.png";
-                break;
-            case 'Digit3': 
-                artistLogo = "media/shaymiLogo.png";
-                break;
-            case 'Digit4': 
-                artistLogo = "media/hatedLogo.png";
-                break;
-            case 'Digit5': 
-                artistLogo = "media/dopeModeLogo.png";
-                break;
-            case 'Digit6':
-                artistLogo = "media/hrspxLogo.png";
-                break;
-            default:
-                break;
+        switch (key) {
+          case "Digit1":
+            changeArtist(0);
+            break;
+          case "Digit2":
+            changeArtist(1);
+            break;
+          case "Digit3":
+            changeArtist(2);
+            break;
+          case "Digit4":
+            changeArtist(3);
+            break;
+          case "Digit5":
+            changeArtist(4);
+            break;
+          case "Digit6":
+            changeArtist(5);
+            break;
+          case "Digit7":
+            changeArtist(6);
+            break;
+          case "Digit8":
+            changeArtist(7);
+            break;
+          case "KeyA":
+            changeVideo("vid0");
+            break;
+          case "KeyS":
+            changeVideo("vid1");
+            break;
+          case "KeyD":
+            changeVideo("vid1");
+            break;
+          default:
+            break;
         }
-        images[0] = artistLogo;
-    })
+      });
+    };
 
-</script>
-</html> 
+    // Start app
+    const startVisuals = () => {
+      addKeyListeners();
+      changeToMoontripVisuals();
+    };
+
+    startVisuals();
+  </script>
+</html>

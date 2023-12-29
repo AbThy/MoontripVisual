@@ -1,0 +1,61 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  font-size: 17px;
+  cursor: none;
+  background-color: black;
+}
+
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+#content {
+  position: fixed;
+  top: 30%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#logo {
+  max-width: 40vw;
+  max-height: 30vh;
+  animation: scaleIn 0.31s ease-in-out;
+}
+
+#artist {
+  max-width: 40vw;
+  max-height: 30vh;
+}
+
+/* Keyframes */
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(10);
+  }
+
+  80% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
